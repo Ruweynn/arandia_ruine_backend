@@ -300,6 +300,7 @@ class Database {
             $this->db = new PDO($dsn, $username, $password, $options);
             $this->driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
         } catch (Exception $e) {
+            error_log('[Database connection] ' . $e->getMessage());
             $error = load_class('Errors', 'kernel');
             $error->show_database_error(
                 $e->getMessage(),
