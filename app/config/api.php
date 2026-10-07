@@ -145,7 +145,7 @@ $config['users_table'] = 'users';
 | a browser, so set your real domain in production.
 |
 */
-$config['allow_origin'] = '*';
+$config['allow_origin'] = getenv('API_ALLOWED_ORIGIN') ?: '*';
 
 /*
 |--------------------------------------------------------------------------

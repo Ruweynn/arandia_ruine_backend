@@ -26,6 +26,8 @@ services:
         value: utf8mb4
       - key: DB_PREFIX
         value: ""
+      - key: API_ALLOWED_ORIGIN
+        value: https://arandia-ruine-frontend.onrender.com
       - key: JWT_SECRET
         generateValue: true
       - key: REFRESH_TOKEN_KEY

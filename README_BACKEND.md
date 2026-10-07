@@ -41,6 +41,7 @@ Deploy this repository as a standalone PHP service. Provide the following enviro
 - `DB_PREFIX`
 - `DB_SSL_CA`
 - `DB_SSL_VERIFY`
+- `API_ALLOWED_ORIGIN` (the exact frontend Static Site origin, e.g. `https://arandia-ruine-frontend.onrender.com`)
 - `JWT_SECRET`
 - `REFRESH_TOKEN_KEY`
 
