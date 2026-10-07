@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: lavalust-product-api
+    env: php
+    plan: free
+    buildCommand: ""
+    startCommand: "php -S 0.0.0.0:$PORT -t public"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: LavaLust Product API
+      - key: DB_DRIVER
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_CHARSET
+        value: utf8mb4
+      - key: DB_PREFIX
+        value: ""
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REFRESH_TOKEN_KEY
+        generateValue: true
