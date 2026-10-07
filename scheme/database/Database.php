@@ -282,17 +282,30 @@ class Database {
                 ? filter_var($database_config['ssl_verify'], FILTER_VALIDATE_BOOLEAN)
                 : true;
 
-            if ($ssl_ca !== null && defined('PDO::MYSQL_ATTR_SSL_CA')) {
-                $options[PDO::MYSQL_ATTR_SSL_CA] = $ssl_ca;
-            }
-            if ($ssl_cert !== null && defined('PDO::MYSQL_ATTR_SSL_CERT')) {
-                $options[PDO::MYSQL_ATTR_SSL_CERT] = $ssl_cert;
-            }
-            if ($ssl_key !== null && defined('PDO::MYSQL_ATTR_SSL_KEY')) {
-                $options[PDO::MYSQL_ATTR_SSL_KEY] = $ssl_key;
-            }
-            if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
-                $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = $ssl_verify;
+            if (PHP_VERSION_ID >= 80500) {
+                if ($ssl_ca !== null) {
+                    $options[\Pdo\Mysql::ATTR_SSL_CA] = $ssl_ca;
+                }
+                if ($ssl_cert !== null) {
+                    $options[\Pdo\Mysql::ATTR_SSL_CERT] = $ssl_cert;
+                }
+                if ($ssl_key !== null) {
+                    $options[\Pdo\Mysql::ATTR_SSL_KEY] = $ssl_key;
+                }
+                $options[\Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT] = $ssl_verify;
+            } else {
+                if ($ssl_ca !== null && defined('PDO::MYSQL_ATTR_SSL_CA')) {
+                    $options[PDO::MYSQL_ATTR_SSL_CA] = $ssl_ca;
+                }
+                if ($ssl_cert !== null && defined('PDO::MYSQL_ATTR_SSL_CERT')) {
+                    $options[PDO::MYSQL_ATTR_SSL_CERT] = $ssl_cert;
+                }
+                if ($ssl_key !== null && defined('PDO::MYSQL_ATTR_SSL_KEY')) {
+                    $options[PDO::MYSQL_ATTR_SSL_KEY] = $ssl_key;
+                }
+                if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+                    $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = $ssl_verify;
+                }
             }
         }
 
