@@ -59,6 +59,17 @@ $router->post('api/auth/register', 'AuthController::register');
 $router->post('api/auth/login', 'AuthController::login');
 $router->get('api/auth/me', 'AuthController::me');
 $router->post('api/auth/logout', 'AuthController::logout');
+$router->post('api/auth/refresh', 'AuthController::refresh');
+
+// Routes used by the LavaLust API Tester.
+$router->post('api/create', 'AuthController::register');
+$router->post('api/login', 'AuthController::login');
+$router->post('api/logout', 'AuthController::logout');
+$router->get('api/profile', 'AuthController::me');
+$router->get('api/list', 'UserController::index');
+$router->put('api/update/{id}', 'UserController::update');
+$router->delete('api/delete/{id}', 'UserController::delete');
+$router->post('api/refresh', 'AuthController::refresh');
 
 $router->options('api/auth/register', function () {});
 $router->options('api/auth/login', function () {});

@@ -430,6 +430,8 @@ class Router
      */
     public function initiate($url, $method)
     {
+        handle_cors();
+
         if (empty($url)) {
             $url = '/';
         }
@@ -438,7 +440,6 @@ class Router
         }
 
         if ($method === 'OPTIONS') {
-            handle_cors();
             http_response_code(204);
             exit;
         }

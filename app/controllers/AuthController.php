@@ -17,9 +17,11 @@ class AuthController extends Controller
     public function register()
     {
         $this->api->require_method('POST');
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $this->api->rate_limit('register:' . $ip, 5, 300);
 
         $body = $this->api->body();
-        $name = trim((string) ($body['name'] ?? ''));
+        $name = trim((string) ($body['username'] ?? $body['name'] ?? ''));
         $email = strtolower(trim((string) ($body['email'] ?? '')));
         $password = (string) ($body['password'] ?? '');
 
@@ -34,6 +36,11 @@ class AuthController extends Controller
         $stmt = $this->db->raw('SELECT id FROM users WHERE email = ? LIMIT 1', [$email]);
         if ($stmt->fetch()) {
             $this->api->respond_error('An account with this email already exists.', 409);
+        }
+
+        $stmt = $this->db->raw('SELECT id FROM users WHERE username = ? LIMIT 1', [$name]);
+        if ($stmt->fetch()) {
+            $this->api->respond_error('An account with this username already exists.', 409);
         }
 
         $hash = password_hash($password, PASSWORD_DEFAULT);
@@ -52,16 +59,17 @@ class AuthController extends Controller
         $this->api->require_method('POST');
 
         $body = $this->api->body();
-        $email = strtolower(trim((string) ($body['email'] ?? '')));
+        $identifier = trim((string) ($body['username'] ?? $body['email'] ?? ''));
+        $email = strtolower(trim((string) ($body['email'] ?? $identifier)));
         $password = (string) ($body['password'] ?? '');
 
-        if ($email === '' || $password === '') {
-            $this->api->respond_error('Email and password are required.', 422);
+        if ($identifier === '' || $password === '') {
+            $this->api->respond_error('Username or email and password are required.', 422);
         }
 
         $stmt = $this->db->raw(
-            'SELECT id, username, email, password, role, is_active FROM users WHERE email = ? LIMIT 1',
-            [$email]
+            'SELECT id, username, email, password, role, is_active FROM users WHERE email = ? OR username = ? LIMIT 1',
+            [$email, $identifier]
         );
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -104,6 +112,25 @@ class AuthController extends Controller
     {
         $this->api->require_jwt();
         $this->api->require_method('POST');
+
+        $body = $this->api->body();
+        if (!empty($body['refresh_token'])) {
+            $this->api->revoke_refresh_token((string) $body['refresh_token']);
+        }
+
         $this->api->respond(['message' => 'Logged out successfully.']);
+    }
+
+    public function refresh()
+    {
+        $this->api->require_method('POST');
+        $body = $this->api->body();
+        $refreshToken = trim((string) ($body['refresh_token'] ?? ''));
+
+        if ($refreshToken === '') {
+            $this->api->respond_error('A refresh token is required.', 422);
+        }
+
+        $this->api->refresh_access_token($refreshToken);
     }
 }
